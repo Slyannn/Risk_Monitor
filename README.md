@@ -76,7 +76,7 @@ HIGH_RISK_THRESHOLD=0.4
 CRITICAL_RISK_THRESHOLD=0.7
 ```
 
-### 4. Démarrage de l'application(Rassurez vous d'avoir lancé la base de données postgres avant)
+### 4. Démarrage de l'application (Rassurez vous d'avoir la base de données postgres en cours d'execution)
 
 #### Démarrage automatique (Recommandé)
 ```bash
@@ -305,10 +305,10 @@ Streamlit affiche les erreurs dans la console et l'interface web.
 ### Utilisation de l’IA
 Pour optimiser le temps de développement et garantir la qualité du code,
 j’ai utilisé l’assistance d’une intelligence artificielle pour :
-• Générer des données factices pour la base de données
-• Tester les différentes fonctionnalités au fur et a mesure du developpement
-• Rédiger la documentation technique (README.md)
-• Fluidifier et accélérer le développement des interfaces avec Streamlit
+- Générer des données factices pour la base de données
+- Tester les différentes fonctionnalités au fur et a mesure du developpement
+- Rédiger la documentation technique (README.md)
+- Fluidifier et accélérer le développement des interfaces avec Streamlit
 
 Toutes les décisions techniques du projet ont été choisies, validées et adaptées par mes soins.
  
