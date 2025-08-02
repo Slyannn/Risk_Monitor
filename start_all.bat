@@ -1,16 +1,21 @@
 @echo off
-echo 🚀 Démarrage Risk Monitor...
-echo.
+echo Demarrage Risk Monitor...
+echo./n
 
-echo 📊 Génération des données de test...
-python backend/test_risk_calculator.py
+timeout /t 1 /nobreak > nul
 
+echo Generation des donnees de test...
+python backend/populate_db.py
+
+timeout /t 1 /nobreak > nul
+
+echo. /n/n
+
+echo  Services disponibles :
+echo   - API FastAPI: http://localhost:8000
+echo   - Dashboard Streamlit: http://localhost:8501
 echo.
-echo 🌐 Services disponibles :
-echo   • API FastAPI: http://localhost:8000
-echo   • Dashboard Streamlit: http://localhost:8501
-echo.
-echo 💡 Appuyez sur Ctrl+C pour arrêter les services
+echo  Appuyez sur Ctrl+C pour arrêter les services
 echo.
 
 :: Démarrer API en arrière-plan

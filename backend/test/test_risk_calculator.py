@@ -3,6 +3,12 @@ Test the risk calculator with sample data
 """
 
 from datetime import datetime, timedelta
+import sys
+import os
+
+# Add the parent directory to Python path to import backend modules
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from database import SessionLocal
 from database.models import User, Subscription, Payment
 from risk_calculator import RiskCalculator
@@ -10,6 +16,14 @@ from risk_calculator import RiskCalculator
 
 def create_test_data(db):
     """Create test users matching the exact patterns from the brief"""
+    
+    # Clean up any existing test data first
+    db.query(Payment).delete()
+    db.query(Subscription).delete()
+    db.query(User).delete()
+    db.commit()
+    
+    base_date = datetime.utcnow()
     
     # Test User 1: "Paid once, then declined subsequent payments"
     user1 = User(name="Classic Risky User", email="classic@test.com")
@@ -21,7 +35,9 @@ def create_test_data(db):
         user_id=user1.id,
         subscription_type="premium",
         status="active",
-        monthly_amount=6.99  # Netflix Premium family share
+        monthly_amount=6.99,
+        effective_from=user1.created_at,
+        effective_until=base_date + timedelta(days=90)  # Netflix Premium family share
     )
     db.add(subscription1)
     db.commit()
@@ -57,7 +73,9 @@ def create_test_data(db):
         user_id=user2.id,
         subscription_type="basic",
         status="active",
-        monthly_amount=3.99  # Spotify family share
+        monthly_amount=3.99,  # Spotify family share
+        effective_from=user2.created_at,
+        effective_until=base_date + timedelta(days=60)
     )
     db.add(subscription2)
     db.commit()
@@ -87,7 +105,9 @@ def create_test_data(db):
         user_id=user3.id,
         subscription_type="basic",
         status="active",
-        monthly_amount=1.99
+        monthly_amount=1.99,  # Very low cost - high risk signal
+        effective_from=user3.created_at,
+        effective_until=base_date + timedelta(days=30)
     )
     db.add(subscription3)
     db.commit()
