@@ -19,6 +19,54 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# CSS personnalisé pour améliorer la responsivité
+st.markdown("""
+<style>
+    /* Amélioration pour les petits écrans */
+    @media (max-width: 768px) {
+        .stMetric > div {
+            font-size: 0.85rem;
+        }
+        .stMetric > div > div {
+            font-size: 0.75rem;
+        }
+        .dataframe div {
+            font-size: 0.8rem !important;
+        }
+        .stSelectbox > div > div {
+            font-size: 0.9rem;
+        }
+    }
+    
+    /* Forcer l'affichage du tableau à être plus compact */
+    .dataframe {
+        font-size: 0.9rem;
+    }
+    
+    /* Réduire les marges sur très petits écrans */
+    @media (max-width: 640px) {
+        .main .block-container {
+            padding-left: 1rem;
+            padding-right: 1rem;
+            padding-top: 1rem;
+        }
+        .stMetric {
+            background-color: #f8f9fa;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            margin: 0.25rem 0;
+        }
+    }
+    
+    /* Améliorer l'affichage des colonnes sur mobiles */
+    @media (max-width: 480px) {
+        .stColumns > div {
+            min-width: 0 !important;
+        }
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # Configuration API
 API_BASE = "http://localhost:8000"
 
@@ -281,11 +329,94 @@ def main():
                         else:
                             st.error("❌ Erreur lors de l'envoi de l'alerte")
                     
-                    # Informations sur l'abonnement
-                    st.subheader("📋 Informations abonnement")
-                    sub_info = analysis['subscription_info']
-                    for key, value in sub_info.items():
-                        st.write(f"**{key.replace('_', ' ').title()}:** {value}")
+                    # Historique des abonnements
+                    st.subheader("📋 Historique des abonnements")
+                    subscriptions = analysis.get('subscriptions_history', [])
+                    
+                    if subscriptions:
+                        # Abonnement actuel (le plus récent avec status active)
+                        current_sub = None
+                        for sub in subscriptions:
+                            if sub['status'] == 'active':
+                                current_sub = sub
+                                break
+                        
+                        if not current_sub and subscriptions:
+                            current_sub = subscriptions[0]  # Prendre le premier si aucun actif
+                        
+                        if current_sub:
+                            st.write("**🔹 Abonnement actuel :**")
+                            
+                            # Layout responsive : 2x2 sur petits écrans, 1x4 sur grands écrans
+                            col1, col2 = st.columns(2)
+                            
+                            with col1:
+                                st.metric("Type", current_sub.get('subscription_type', 'N/A'))
+                                st.metric("Statut", current_sub.get('status', 'N/A'))
+                            
+                            with col2:
+                                st.metric("Montant", f"{current_sub.get('monthly_amount', 0):.2f}€")
+                                from datetime import datetime
+                                until_date = current_sub.get('effective_until', '')
+                                if until_date:
+                                    until_date = datetime.fromisoformat(until_date.replace('Z', '+00:00')).strftime('%Y-%m-%d')
+                                st.metric("Expire le", until_date if until_date else 'N/A')
+                        
+                        # Afficher tous les abonnements si plusieurs
+                        if len(subscriptions) > 1:
+                            st.write("**📋 Historique complet :**")
+                            
+                            # Option d'affichage compact
+                            compact_view = st.checkbox("Vue compacte", value=True, help="Affichage optimisé pour les petits écrans")
+                            
+                            df_subs = pd.DataFrame(subscriptions)
+                            
+                            # Formatter les dates
+                            for date_col in ['effective_from', 'effective_until', 'created_at']:
+                                if date_col in df_subs.columns:
+                                    df_subs[date_col] = pd.to_datetime(df_subs[date_col]).dt.strftime('%Y-%m-%d %H:%M')
+                            
+                            # Renommer les colonnes pour l'affichage
+                            df_display = df_subs.rename(columns={
+                                'subscription_type': 'Type',
+                                'monthly_amount': 'Montant (€)',
+                                'status': 'Statut',
+                                'effective_from': 'Début',
+                                'effective_until': 'Fin',
+                                'created_at': 'Créé le'
+                            })
+                            
+                            # Trier par date de création (plus récent en premier)
+                            if 'Créé le' in df_display.columns:
+                                df_display = df_display.sort_values('Créé le', ascending=False)
+                            
+                            # Affichage conditionnel selon la vue choisie
+                            if compact_view:
+                                # Vue compacte : format de liste
+                                for i, row in df_display.iterrows():
+                                    with st.container():
+                                        st.markdown(f"""
+                                        **{row['Type']}** - {row['Montant (€)']}€ - *{row['Statut']}*  
+                                        📅 {row['Début']} → {row['Fin']}
+                                        """)
+                                        if i < len(df_display) - 1:
+                                            st.divider()
+                            else:
+                                # Vue tableau complète
+                                st.dataframe(
+                                    df_display[['Type', 'Montant (€)', 'Statut', 'Début', 'Fin']],
+                                    use_container_width=True,
+                                    hide_index=True,
+                                    height=200
+                                )
+                            
+                            # Détecter les downgrades
+                            if len(subscriptions) >= 2:
+                                amounts = [sub['monthly_amount'] for sub in subscriptions]
+                                if len(amounts) >= 2 and amounts[0] < amounts[1]:  # Le plus récent est moins cher
+                                    st.warning("⚠️ **Downgrade détecté !** L'utilisateur est passé d'un abonnement plus cher à moins cher (signal de départ potentiel)")
+                    else:
+                        st.warning("Aucun abonnement trouvé")
                 
                 # Historique des paiements
                 if analysis['payment_history']:
