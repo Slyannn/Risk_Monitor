@@ -6,6 +6,10 @@ Tests the FastAPI endpoints
 import requests
 import json
 
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 API_BASE = "http://localhost:8000"
 
 def test_health_check():

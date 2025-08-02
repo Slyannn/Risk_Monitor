@@ -7,6 +7,10 @@ from datetime import datetime, timedelta
 from faker import Faker
 import random
 
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from database import SessionLocal, init_database
 from database.models import User, Subscription, Payment
 

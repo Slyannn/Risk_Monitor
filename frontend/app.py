@@ -90,7 +90,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 @st.cache_data(ttl=60)  # Cache pendant 1 minute
-def fetch_risky_users(min_risk_score=0.4, limit=100):
+def fetch_risky_users(min_risk_score=0.2, limit=100):
     """Récupérer les utilisateurs à risque depuis l'API"""
     try:
         response = requests.get(f"{API_BASE}/api/risky-users", 
@@ -158,7 +158,7 @@ def main():
         "Seuil de risque minimum (%)",
         min_value=0,
         max_value=100,
-        value=40,
+        value=25,
         step=5,
         help="Afficher les utilisateurs avec un score de risque supérieur à ce seuil"
     )

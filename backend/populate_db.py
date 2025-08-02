@@ -84,7 +84,7 @@ def create_downgrade_pattern(db, base_date):
     db.commit()
     
     # Current basic subscription (downgrade)
-    new_amount = random.choice([1.99, 2.99, 3.99])
+    new_amount = random.choice([1.21, 1.78, 1.99, 2.12, 2.54, 2.99])
     subscription_new = Subscription(
         user_id=user.id,
         subscription_type="basic",
@@ -179,7 +179,7 @@ def create_recent_failures_user(db, base_date):
         user_id=user.id,
         subscription_type="basic",
         status="active",
-        monthly_amount=random.choice([1.99, 2.99]),
+        monthly_amount=random.choice([1,20, 1.28, 1.99, 2.54, 2.99]),
         created_at=user.created_at,
         effective_from=user.created_at,
         effective_until=base_date + timedelta(days=random.randint(30, 60))
@@ -230,17 +230,17 @@ def populate_database():
         created_users = []
         
         print("📊 Creating risky users (Pattern 1 - classic brief pattern)...")
-        for i in range(3):
+        for i in range(5):
             user = create_risky_pattern_1(db, base_date)
             created_users.append(user)
         
         print("📊 Creating risky users (Pattern 2 - downgrade signal)...")
-        for i in range(3):
+        for i in range(7):
             user = create_downgrade_pattern(db, base_date)
             created_users.append(user)
         
         print("📊 Creating users with recent failures...")
-        for i in range(2):
+        for i in range(3):
             user = create_recent_failures_user(db, base_date)
             created_users.append(user)
         

@@ -1,4 +1,6 @@
 env/
+venv/
+config.env
 .env
 __pycache__/
 database/__pycache__/

@@ -2,6 +2,10 @@
 Simple database test for MVP
 """
 
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from database import SessionLocal
 from database.models import User
 

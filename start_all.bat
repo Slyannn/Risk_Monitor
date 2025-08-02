@@ -1,6 +1,9 @@
 @echo off
 echo Demarrage Risk Monitor...
-echo./n
+echo.
+echo.
+
+call env/Scripts/activate
 
 timeout /t 1 /nobreak > nul
 
@@ -9,7 +12,8 @@ python backend/populate_db.py
 
 timeout /t 1 /nobreak > nul
 
-echo. /n/n
+echo. 
+echo.
 
 echo  Services disponibles :
 echo   - API FastAPI: http://localhost:8000
@@ -27,5 +31,5 @@ timeout /t 3 /nobreak > nul
 :: Démarrer Streamlit en arrière-plan
 start "Streamlit Dashboard" cmd /c "streamlit run frontend/app.py --server.port 8501"
 
-echo ✅ Services démarrés !
+echo Services demarres !
 pause
