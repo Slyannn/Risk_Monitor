@@ -44,7 +44,7 @@ python -m venv env
 # Sur Linux/Mac :
 source env/bin/activate
 
-# Installer les dépendances
+# Installer les dépendances (peut prendre 5-10 minutes)
 pip install -r requirements.txt
 ```
 

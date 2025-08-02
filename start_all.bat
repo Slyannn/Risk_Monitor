@@ -3,7 +3,7 @@ echo Demarrage Risk Monitor...
 echo.
 echo.
 
-call env/Scripts/activate
+call env\Scripts\activate
 
 timeout /t 1 /nobreak > nul
 
@@ -19,7 +19,7 @@ echo  Services disponibles :
 echo   - API FastAPI: http://localhost:8000
 echo   - Dashboard Streamlit: http://localhost:8501
 echo.
-echo  Appuyez sur Ctrl+C pour arrêter les services
+echo  Appuyez sur Ctrl+C pour arreter les services
 echo.
 
 :: Démarrer API en arrière-plan
