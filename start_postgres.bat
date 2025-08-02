@@ -1,0 +1,1 @@
+docker run --name risk-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_DB=risk_monitor -p 5432:5432 -d postgres:15
